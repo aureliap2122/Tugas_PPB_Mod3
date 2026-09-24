@@ -15,9 +15,10 @@ class _ProfilePageState extends State<ProfilePage> {
       'Aurelia Putri Cahyani'; // ganti kalau mau nama lengkap + NIM
   final String nim = '21120124120019';
   final String fotoUrl =
-      'https://drive.google.com/uc?export=view&id=1hIlEygo0iW49XJEF55YnGi6o_dih-Y_9';
+      'https://drive.google.com/uc?export=view&id=1NpIz_hUHb39psyHO82cJElEpOSAV5bra';
   final String backgroundUrl =
-      'https://drive.google.com/uc?export=view&id=1hIlEygo0iW49XJEF55YnGi6o_dih-Y_9';
+      'https://drive.google.com/uc?export=view&id=1X9MT_QKfeHYzQmIfoRcoMHnVOftUEbXS';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
