@@ -10,14 +10,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // TODO: ganti nilai-nilai di bawah ini sesuai data kamu sendiri
-  final String nama =
-      'Aurelia Putri Cahyani'; // ganti kalau mau nama lengkap + NIM
-  final String nim = '21120124120019';
+  // TODO: lengkapi/ubah anggota kelompok kamu di sini
+  final List<Map<String, String>> groupMembers = const [
+    {'nama': 'Aurelia Putri Cahyani', 'nim': '21120124120019'},
+    {'nama': 'Habib Mukhlis Triatmojo', 'nim': '21120124130081'},
+    {'nama': 'Ahmad Dika Styansah', 'nim': '21120124130052'},
+    {'nama': 'Citra Marta Fatmala', 'nim': '21120124120012'},
+  ];
+
   final String fotoUrl =
-      'https://drive.google.com/uc?export=view&id=1NpIz_hUHb39psyHO82cJElEpOSAV5bra';
+      'https://drive.google.com/uc?export=view&id=1s5okViNKbH2tKDRQTDS_I90khUfA7ke0';
   final String backgroundUrl =
-      'https://drive.google.com/uc?export=view&id=1X9MT_QKfeHYzQmIfoRcoMHnVOftUEbXS';
+      'https://drive.google.com/uc?export=view&id=1cRAMeVctBLrh0s-qnaBX48-AHODDIN7F';
 
   @override
   Widget build(BuildContext context) {
@@ -29,58 +33,57 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(icon: const Icon(Icons.home), onPressed: widget.onHomeTap),
         ],
       ),
-      body: Stack(
-        alignment: Alignment.center,
+      body: Column(
         children: [
-          Positioned.fill(
-            child: FractionallySizedBox(
-              alignment: Alignment.topCenter,
-              heightFactor: 0.5,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    image: NetworkImage(backgroundUrl),
-                  ),
-                  color: const Color.fromARGB(
-                    255,
-                    255,
-                    252,
-                    252,
-                  ).withValues(alpha: 128),
-                ),
+          // Background banner - berdiri sendiri, gak ditumpuk apa-apa
+          Image.network(
+            backgroundUrl,
+            width: double.infinity,
+            height: 160,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: double.infinity,
+              height: 160,
+              color: Colors.grey.shade300,
+              child: const Icon(Icons.image, size: 48, color: Colors.grey),
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Foto profil bulat, ditaruh DI BAWAH background (bukan numpuk di atasnya)
+          Container(
+            width: 100.0,
+            height: 100.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(fotoUrl),
               ),
             ),
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100.0,
-                  height: 100.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(fotoUrl),
+          const SizedBox(height: 20),
+          for (var member in groupMembers)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                children: [
+                  Text(
+                    member['nama'] ?? 'No Name',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  nama,
-                  style: const TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 4.0),
+                  Text(
+                    member['nim'] ?? 'No NIM',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16.0, color: Colors.grey),
                   ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(nim, style: const TextStyle(fontSize: 16.0)),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

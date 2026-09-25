@@ -8,8 +8,15 @@ import 'detail.dart';
 
 class HomePage extends StatefulWidget {
   final void Function(Country country)? onCountryOpened;
+  final List<Country> favorites;
+  final void Function(Country country)? onToggleFavorite;
 
-  const HomePage({super.key, this.onCountryOpened});
+  const HomePage({
+    super.key,
+    this.onCountryOpened,
+    this.favorites = const [],
+    this.onToggleFavorite,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -53,7 +60,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Terapkan filter benua + sorting ke data yang udah kesimpen
   List<Country> get _visibleCountries {
     var list = _selectedRegion == 'All'
         ? List<Country>.from(_allCountries)
@@ -66,6 +72,9 @@ class _HomePageState extends State<HomePage> {
 
     return list;
   }
+
+  bool _isFavorite(Country country) =>
+      widget.favorites.any((c) => c.name == country.name);
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +140,8 @@ class _HomePageState extends State<HomePage> {
                   itemCount: list.length,
                   itemBuilder: (context, i) {
                     final country = list[i];
+                    final isFav = _isFavorite(country);
+
                     return Card(
                       child: ListTile(
                         leading: country.flagsPng != null
@@ -143,13 +154,27 @@ class _HomePageState extends State<HomePage> {
                             : const SizedBox(width: 50),
                         title: Text(country.name),
                         subtitle: Text(country.region),
+                        trailing: IconButton(
+                          tooltip: isFav
+                              ? 'Hapus dari favorit'
+                              : 'Tambah ke favorit',
+                          icon: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            color: isFav ? Colors.red : null,
+                          ),
+                          onPressed: () =>
+                              widget.onToggleFavorite?.call(country),
+                        ),
                         onTap: () {
                           widget.onCountryOpened?.call(country);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailPage(country: country),
+                              builder: (context) => DetailPage(
+                                country: country,
+                                isFavorite: isFav,
+                                onToggleFavorite: widget.onToggleFavorite,
+                              ),
                             ),
                           );
                         },

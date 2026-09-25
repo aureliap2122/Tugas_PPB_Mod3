@@ -2,15 +2,56 @@ import 'package:flutter/material.dart';
 
 import '../models/country.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final Country country;
+  final bool isFavorite;
+  final void Function(Country country)? onToggleFavorite;
 
-  const DetailPage({super.key, required this.country});
+  const DetailPage({
+    super.key,
+    required this.country,
+    this.isFavorite = false,
+    this.onToggleFavorite,
+  });
+
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  late bool _isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavorite = widget.isFavorite;
+  }
+
+  void _handleToggleFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    widget.onToggleFavorite?.call(widget.country);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final country = widget.country;
+
     return Scaffold(
-      appBar: AppBar(title: Text(country.name)),
+      appBar: AppBar(
+        title: Text(country.name),
+        actions: [
+          IconButton(
+            tooltip: _isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
+            icon: Icon(
+              _isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: _isFavorite ? Colors.red : null,
+            ),
+            onPressed: _handleToggleFavorite,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
