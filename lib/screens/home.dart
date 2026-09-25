@@ -26,6 +26,9 @@ class _HomePageState extends State<HomePage> {
   late Future<List<Country>> _futureCountries;
   List<Country> _allCountries = [];
 
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
   String _selectedRegion = 'All';
   bool _sortAscending = true;
 
@@ -43,6 +46,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _futureCountries = fetchCountries();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<List<Country>> fetchCountries() async {
@@ -65,6 +74,14 @@ class _HomePageState extends State<HomePage> {
         ? List<Country>.from(_allCountries)
         : _allCountries.where((c) => c.region == _selectedRegion).toList();
 
+    if (_searchQuery.isNotEmpty) {
+      list = list
+          .where(
+            (c) => c.name.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
+
     list.sort(
       (a, b) =>
           _sortAscending ? a.name.compareTo(b.name) : b.name.compareTo(a.name),
@@ -82,6 +99,30 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text('Countries')),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari nama negara...',
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(),
+                isDense: true,
+                suffixIcon: _searchQuery.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      ),
+              ),
+              onChanged: (value) {
+                setState(() => _searchQuery = value);
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
@@ -131,9 +172,7 @@ class _HomePageState extends State<HomePage> {
                 final list = _visibleCountries;
 
                 if (list.isEmpty) {
-                  return const Center(
-                    child: Text('Tidak ada negara di benua ini'),
-                  );
+                  return const Center(child: Text('Negara tidak ditemukan'));
                 }
 
                 return ListView.builder(

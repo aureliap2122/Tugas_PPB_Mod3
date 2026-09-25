@@ -35,30 +35,57 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Column(
         children: [
-          // Background banner - berdiri sendiri, gak ditumpuk apa-apa
-          Image.network(
-            backgroundUrl,
-            width: double.infinity,
-            height: 160,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: double.infinity,
-              height: 160,
-              color: Colors.grey.shade300,
-              child: const Icon(Icons.image, size: 48, color: Colors.grey),
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Foto profil bulat, ditaruh DI BAWAH background (bukan numpuk di atasnya)
-          Container(
-            width: 100.0,
-            height: 100.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(fotoUrl),
-              ),
+          // Banner + foto profil ditumpuk pakai Stack, jadi abu-abu
+          // banner "nembus" ke belakang setengah lingkaran foto profil
+          SizedBox(
+            height: 210, // 160 (tinggi banner) + 50 (setengah avatar)
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Image.network(
+                    backgroundUrl,
+                    width: double.infinity,
+                    height: 160,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      width: double.infinity,
+                      height: 160,
+                      color: Colors.grey.shade300,
+                      child: const Icon(
+                        Icons.image,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                // Foto profil bulat, posisinya ditarik ke atas 50px supaya
+                // separuh badannya nempel di banner abu-abu, separuhnya lagi
+                // turun ke area putih di bawahnya.
+                Positioned(
+                  top: 110, // 160 (tinggi banner) - 50 (jari-jari avatar)
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      width: 100.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 4),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(fotoUrl),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
